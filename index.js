@@ -231,7 +231,7 @@ const playMusics = (msg) => {
       servidores[msg.guild.id].playingNow = false; // não está tocando
       if (servidores[msg.guild.id].queue.length > 0) {
         // se a fila tiver mais de uma música
-        playMusics(); // roda a função novamente
+        playMusics(msg); // roda a função novamente
       } else {
         servidores[msg.guild.id].dispatcher = null; // se não tiver mais nada, ele não está tocando nada
       }
