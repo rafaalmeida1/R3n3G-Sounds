@@ -1,0 +1,18 @@
+{
+  "name": "r3n3gbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "github:discordjs/opus",
+    "discord.js": "^12.5.1",
+    "googleapis": "^92.0.0",
+    "ytdl-core": "^4.9.2"
+  }
+}
