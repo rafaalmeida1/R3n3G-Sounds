@@ -1,7 +1,6 @@
 {
   "name": "r3n3gbot",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,5 +13,15 @@
     "discord.js": "^12.5.1",
     "googleapis": "^92.0.0",
     "ytdl-core": "^4.9.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafaalmeida1/R3n3G-Sounds.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rafaalmeida1/R3n3G-Sounds/issues"
+  },
+  "homepage": "https://github.com/rafaalmeida1/R3n3G-Sounds#readme",
+  "description": ""
 }
