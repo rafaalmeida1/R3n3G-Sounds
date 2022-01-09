@@ -19,14 +19,14 @@ client.on("guildCreate", (guild) => {
     console.log('Id da Guild onde eu entrei: ' + guild.id);
     console.log('Nome da Guild onde eu entrei: ' + guild.name);
 
-    servidores[guild.id] = { // cria um servidor se não existir
-        connection: null, // conexão
-        dispatcher: null, // isso é o que vai tocar
-        queue: [], // isso é a fila de músicas
-        playingNow: false, // isso é se está tocando alguma música
+    servidores[guild.id] = { 
+        connection: null, 
+        dispatcher: null, 
+        queue: [], 
+        playingNow: false, 
     }
 
-    saveServer(guild.id); // salva o servidor
+    saveServer(guild.id); 
 });
 
 client.on("ready", () => {
@@ -36,24 +36,22 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  //filtro de mensagens
+  // quando receber uma mensagem
 
-  if (!msg.guild) return; // se não for uma mensagem de servidor, retorna
+  if (!msg.guild) return; 
 
-  if (!msg.content.startsWith(prefix)) return; //se não for uma mensagem com o prefixo, retorna
+  if (!msg.content.startsWith(prefix)) return; 
 
   if (!msg.member.voice.channel) {
     msg.channel.send("Se não ta em um canal 🦧");
-    return; // se não estiver em um canal de voz, retorna
+    return; 
   }
   //comandos
   if (msg.content === prefix + "j") {
     // .j
     try {
-      // tenta
       servidores[msg.guild.id].connection = await msg.member.voice.channel.join(); // espera o comando ser executado e então conecta
     } catch (err) {
-      // se der erro
       console.log("'Erro ao entra no canal de voz!");
       console.log(err);
     }
@@ -70,16 +68,14 @@ client.on("message", async (msg) => {
 
   if (msg.content.startsWith(prefix + "p")) {
     // .p <link>
-    let oQueTocar = msg.content.slice(3); // pega o que está depois do comando
+    let oQueTocar = msg.content.slice(3);
 
     if (oQueTocar.length === 0) {
-      // se não tiver nada depois do comando
-      msg.channel.send("Você tem que digitar algo corno 🐂"); // manda uma mensagem
+      msg.channel.send("Você tem que digitar algo corno 🐂"); 
       return;
     }
 
     if (servidores[msg.guild.id].connection === null) {
-      // se não estiver conectado ao canal de voz, ele entra
       try {
         servidores[msg.guild.id].connection = await msg.member.voice.channel.join();
       } catch (err) {
@@ -89,18 +85,16 @@ client.on("message", async (msg) => {
     }
 
     if (ytdl.validateURL(oQueTocar)) {
-      // se o que está depois do comando for uma url válida
-      servidores[msg.guild.id].queue.push(oQueTocar); // adiciona a fila
+      servidores[msg.guild.id].queue.push(oQueTocar); 
       console.log("Adicionado: " + oQueTocar);
       playMusics(msg);
     } else {
       youtube.search.list(
         {
-          // se não for uma url válida, procura na api do youtube
-          q: oQueTocar, // Search query
-          part: "snippet", //pedaço de informação de cada vídeo
-          fields: "items(id(videoId), snippet(title, channelTitle))", //campos que quero que retorne
-          type: "video", //tipo de pesquisa
+          q: oQueTocar, 
+          part: "snippet",
+          fields: "items(id(videoId), snippet(title, channelTitle))",
+          type: "video",
         },
         function (err, result) {
           if (err) {
@@ -108,59 +102,47 @@ client.on("message", async (msg) => {
           }
 
           if (result) {
-            // se tiver resultado
             const listResult = [];
 
-            //organiza nossos resultados da pesquisa
             for (let i in result.data.items) {
-              // para cada item
               const createItem = {
-                // cria um objeto
-                titleVideo: result.data.items[i].snippet.title, // titulo do vídeo
-                channelTitle: result.data.items[i].snippet.channelTitle, // canal do vídeo
+                titleVideo: result.data.items[i].snippet.title, 
+                channelTitle: result.data.items[i].snippet.channelTitle, 
                 videoId:
                   "https://www.youtube.com/watch?v=" +
-                  result.data.items[i].id.videoId, // id do vídeo
-                urlVideo: "https://www.youtube.com/watch?v=" + result.data.items[i].id.videoId, // url do vídeo
+                  result.data.items[i].id.videoId, 
+                urlVideo: "https://www.youtube.com/watch?v=" + result.data.items[i].id.videoId, 
               };
 
-              listResult.push(createItem); // adiciona o objeto a lista
+              listResult.push(createItem);
             }
 
-            // construindo a mensagem de Embed
-            const embed = new Discord.MessageEmbed() // cria um embed
-              .setColor([194, 90, 1]) // cor do embed
-              .setAuthor("🎶 R3ɳ3ɠ Sounds 🎶") // titulo do embed
-              .setDescription("🎵 Escolha uma música de 1-5 🎵"); // descrição do embed
+            const embed = new Discord.MessageEmbed() 
+              .setColor([194, 90, 1]) 
+              .setAuthor("🎶 R3ɳ3ɠ Sounds 🎶") 
+              .setDescription("🎵 Escolha uma música de 1-5 🎵"); 
 
-            // adiciona campos para cada resultado da lista
             for (let i in listResult) {
-              // para cada resultado
               embed.addField(
-                // adiciona um campo
-                `${parseInt(i) + 1}: ${listResult[i].titleVideo}`, // titulo do campo
-                `${listResult[i].channelTitle}` // canal do campo
+                `${parseInt(i) + 1}: ${listResult[i].titleVideo}`, 
+                `${listResult[i].channelTitle}`
               );
             }
 
             msg.channel
-              .send(embed) // envia o embed
+              .send(embed) 
               .then((embedMessage) => {
-                // quando envia o embed
-                const reactions = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]; // lista de reações
+                const reactions = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]; 
 
-                //reage na mensagem para cada emoji que escolhemos
                 for (let i = 0; i < reactions.length; i++) {
-                  // for(let i in reactions) são a mesma coisa
-                  embedMessage.react(reactions[i]); // reage na mensagem
+                  embedMessage.react(reactions[i]);
                 }
 
                 const filter = (reaction, user) => {
-                  // filtro de reações
                   return (
-                    reactions.includes(reaction.emoji.name) && // se a reação for uma das escolhidas
+                    reactions.includes(reaction.emoji.name) && 
                     user.id === msg.author.id
-                  ); // e o usuário for o mesmo que enviou a mensagem que enviou a reação retorna true, senão false
+                  );
                 };
 
                 embedMessage
@@ -168,17 +150,16 @@ client.on("message", async (msg) => {
                     max: 1,
                     time: 30000,
                     errors: ["time"],
-                  }) // espera por uma reação e filtra as reações que foram escolhidas
+                  }) 
                   .then((collected) => {
-                    // quando tiver uma reação
-                    const reaction = collected.first(); // pega a primeira reação
-                    const idOption = reactions.indexOf(reaction.emoji.name); // pega o index da reação escolhida e armazena na variável idOption
+                    const reaction = collected.first(); 
+                    const idOption = reactions.indexOf(reaction.emoji.name); 
 
                     msg.channel
                       .send(`🎵 Você escolheu: ${listResult[idOption].titleVideo} 
-                                                              de ${listResult[idOption].channelTitle} 🎵`); // manda a mensagem com o que o usuário escolheu
+                                                              de ${listResult[idOption].channelTitle} 🎵`); 
 
-                    servidores[msg.guild.id].queue.push(listResult[idOption].videoId); // adiciona a fila
+                    servidores[msg.guild.id].queue.push(listResult[idOption].videoId);
                     for (let i in servidores[msg.guild.id].queue) {
                       msg.channel.send(
                         `🎵 ${parseInt(i) + 1} - ${listResult[i].titleVideo } - ${listResult[i].urlVideo}`
@@ -187,10 +168,10 @@ client.on("message", async (msg) => {
                       return;
                     }
 
-                    playMusics(msg); // toca a música
+                    playMusics(msg);
                   })
                   .catch((err) => {
-                    msg.reply("Você não escolheu nenhuma música macaco 🦧"); // manda uma mensagem de erro
+                    msg.reply("Você não escolheu nenhuma música macaco 🦧");
                     console.log(err);
                   });
               });
@@ -202,8 +183,7 @@ client.on("message", async (msg) => {
 
   if (msg.content === prefix + "s") {
     // .s
-    servidores[msg.guild.id].dispatcher.end(); // para a música atual e vai para a proxima
-    // mostra a nova música
+    servidores[msg.guild.id].dispatcher.end(); 
     for (let i in servidores[msg.guild.id].queue) {
       msg.channel.send(
         `A musica que está tocando é: ${
@@ -217,23 +197,20 @@ client.on("message", async (msg) => {
 
 const playMusics = (msg) => {
   if (servidores[msg.guild.id].playingNow === false) {
-    // se não estiver tocando nada
 
-    const playNow = servidores[msg.guild.id].queue[0]; // pega a primeira música da fila
-    servidores[msg.guild.id].playingNow = true; // está tocando
+    const playNow = servidores[msg.guild.id].queue[0]; 
+    servidores[msg.guild.id].playingNow = true; 
     servidores[msg.guild.id].dispatcher = servidores[msg.guild.id].connection.play(
       ytdl(playNow)
-    ); // toca a música
+    );
 
     servidores[msg.guild.id].dispatcher.on("finish", () => {
-      // quando terminar
-      servidores[msg.guild.id].queue.shift(); // remove a primeira música da fila
-      servidores[msg.guild.id].playingNow = false; // não está tocando
+      servidores[msg.guild.id].queue.shift(); 
+      servidores[msg.guild.id].playingNow = false; 
       if (servidores[msg.guild.id].queue.length > 0) {
-        // se a fila tiver mais de uma música
-        playMusics(msg); // roda a função novamente
+        playMusics(msg); 
       } else {
-        servidores[msg.guild.id].dispatcher = null; // se não tiver mais nada, ele não está tocando nada
+        servidores[msg.guild.id].dispatcher = null;
       }
     });
   }
@@ -273,4 +250,4 @@ const saveServer = (idNewServer) => {
     });
 }
 
-client.login(configs.TOKEN_DISCORD); // login do bot
+client.login(configs.TOKEN_DISCORD);
