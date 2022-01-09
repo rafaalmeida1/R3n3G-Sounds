@@ -200,19 +200,19 @@ client.on("message", async (msg) => {
     }
   }
 
-  // if (msg.content === prefix + "s") {
-  //   // .s
-  //   servidores[msg.guild.id].dispatcher.end(); // para a música atual e vai para a proxima
-  //   // mostra a nova música
-  //   for (let i in servidores[msg.guild.id].queue) {
-  //     msg.channel.send(
-  //       `A musica que está tocando é: ${
-  //         servidores[msg.guild.id].queue[parseInt(i) + 1]
-  //       }`
-  //     );
-  //     break;
-  //   }
-  // }
+  if (msg.content === prefix + "s") {
+    // .s
+    servidores[msg.guild.id].dispatcher.end(); // para a música atual e vai para a proxima
+    // mostra a nova música
+    for (let i in servidores[msg.guild.id].queue) {
+      msg.channel.send(
+        `A musica que está tocando é: ${
+          servidores[msg.guild.id].queue[parseInt(i) + 1]
+        }`
+      );
+      break;
+    }
+  }
 });
 
 const playMusics = (msg) => {
