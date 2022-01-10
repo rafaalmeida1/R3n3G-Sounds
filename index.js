@@ -165,7 +165,6 @@ client.on("message", async (msg) => {
                         `🎵 ${parseInt(i) + 1} - ${listResult[i].titleVideo } - ${listResult[i].urlVideo}`
                         
                       );
-                      return;
                     }
 
                     playMusics(msg);
