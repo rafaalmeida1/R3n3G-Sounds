@@ -43,7 +43,7 @@ client.on("message", async (msg) => {
   if (!msg.content.startsWith(prefix)) return; 
 
   if (!msg.member.voice.channel) {
-    msg.channel.send("Se não ta em um canal 🦧");
+    msg.channel.send("Se não ta em um canal");
     return; 
   }
   //comandos
@@ -71,7 +71,7 @@ client.on("message", async (msg) => {
     let oQueTocar = msg.content.slice(3);
 
     if (oQueTocar.length === 0) {
-      msg.channel.send("Você tem que digitar algo corno 🐂"); 
+      msg.channel.send("Você tem que digitar algo"); 
       return;
     }
 
@@ -170,7 +170,7 @@ client.on("message", async (msg) => {
                     playMusics(msg);
                   })
                   .catch((err) => {
-                    msg.reply("Você não escolheu nenhuma música macaco 🦧");
+                    msg.reply("Você não escolheu nenhuma música");
                     console.log(err);
                   });
               });
